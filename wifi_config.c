@@ -102,7 +102,13 @@ bool send_data_to_access_point(char *temperature)
         return true;
 
     busy = true;
-    char *my_ip = get_my_ip();
+    
+    // Variável para armazenar o IP
+    char my_ip[16];
+
+    uint8_t *ip_address = get_my_ip();
+        
+    snprintf(my_ip, 16, "%d.%d.%d.%d", ip_address[0], ip_address[1], ip_address[2], ip_address[3]);
 
     snprintf(json_data, JSON_BUF_SIZE,
              "{\n  \"IP\": \"%s\",\n  \"Temp\": %.2f\n}",
