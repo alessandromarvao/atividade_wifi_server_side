@@ -58,7 +58,7 @@ void ssd1306_clear_display(uint8_t *ssd) {
 /**
  * Imprime os valores passados como parâmetro no display OLED
  */
-void display_temperature(float temp)
+void display_temperature(float temp, char *ip)
 {
     struct render_area frame_area = {
         start_column : 0,
@@ -84,7 +84,7 @@ void display_temperature(float temp)
     snprintf(temp_formatted, sizeof(temp_formatted), "%.1f C", temp);
 
     // Imprime a mensagem no display OLED
-    ssd1306_draw_string(ssd, 28, 0, "Bem vindo");
+    ssd1306_draw_string(ssd, 28, 0, ip);
     ssd1306_draw_string(ssd, 22, 24, "Temperatura");
     ssd1306_draw_string(ssd, 50, 43, temp_formatted);
 

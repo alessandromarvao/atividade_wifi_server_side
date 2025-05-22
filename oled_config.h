@@ -3,6 +3,6 @@
 
 void i2c_oled_init();
 
-void display_temperature(float temp);
+void display_temperature(float temp, char *ip);
 
 #endif

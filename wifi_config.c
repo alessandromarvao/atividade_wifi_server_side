@@ -14,9 +14,13 @@
 
 volatile bool is_connected = false;
 static bool busy = false;
+
+char *my_ip;
+
 char json_data[JSON_BUF_SIZE];
 
-void wifi_connect()
+// Função para inicializar o Wi-Fi e conectar-se à rede
+bool wifi_connect()
 {
     // Inicializa o chip Wi-Fi
     if (cyw43_arch_init())
@@ -34,6 +38,8 @@ void wifi_connect()
     if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASS, CYW43_AUTH_WPA2_AES_PSK, 30000))
     {
         printf("Failed to connect to Wi-Fi\n");
+
+        return false;
     }
     else
     {
@@ -44,8 +50,19 @@ void wifi_connect()
 
         // Obtém o IP atribuído
         uint8_t *ip_address = (uint8_t *)&(cyw43_state.netif[0].ip_addr.addr);
-        printf("%d.%d.%d.%d", ip_address[0], ip_address[1], ip_address[2], ip_address[3]);
+
+        // Armazena o IP em uma string
+        snprintf(my_ip, 16, "%d.%d.%d.%d", ip_address[0], ip_address[1], ip_address[2], ip_address[3]);
+
+        // Exibe o IP no console (para debug)
+        printf("%s\n", my_ip);
     }
+    return true;
+}
+
+// Função para obter o IP atribuído
+char* get_my_ip() {
+    return my_ip;
 }
 
 // Função chamada quando a conexão TCP com o servidor é estabelecida
@@ -81,7 +98,7 @@ static err_t tcp_client_connected(void *arg, struct tcp_pcb *tpcb, err_t err)
 }
 
 // Função chamada periodicamente para enviar os dados JSON via POST
-bool send_data_to_access_point(repeating_timer_t *t)
+bool send_data_to_access_point(char *temperature)
 {
     // Verifica se já está ocupado enviando dados
     // Se já estiver ocupado, não faz nada
@@ -89,6 +106,10 @@ bool send_data_to_access_point(repeating_timer_t *t)
         return true;
 
     busy = true;
+
+    snprintf(json_data, JSON_BUF_SIZE,
+             "{\n  \"IP\": \"%s\",\n  \"Temp\": %.2f\n}",
+             my_ip, temperature);
 
     struct tcp_pcb *pcb = tcp_new();
     if (!pcb)
