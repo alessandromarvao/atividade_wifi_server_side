@@ -16,6 +16,6 @@ bool wifi_connect();
 uint8_t *get_my_ip();
 
 // Função para enviar os dados JSON via POST
-bool send_data_to_access_point(char *temperature);
+bool send_data_to_access_point(float temperature);
 
 #endif

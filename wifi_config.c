@@ -94,7 +94,7 @@ static err_t tcp_client_connected(void *arg, struct tcp_pcb *tpcb, err_t err)
 }
 
 // Função chamada periodicamente para enviar os dados JSON via POST
-bool send_data_to_access_point(char *temperature)
+bool send_data_to_access_point(float temperature)
 {
     // Verifica se já está ocupado enviando dados
     // Se já estiver ocupado, não faz nada
@@ -109,6 +109,7 @@ bool send_data_to_access_point(char *temperature)
     uint8_t *ip_address = get_my_ip();
         
     snprintf(my_ip, 16, "%d.%d.%d.%d", ip_address[0], ip_address[1], ip_address[2], ip_address[3]);
+    
 
     snprintf(json_data, JSON_BUF_SIZE,
              "{\n  \"IP\": \"%s\",\n  \"Temp\": %.2f\n}",

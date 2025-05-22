@@ -29,5 +29,8 @@ int main()
 
     while (true) {
         display_temperature(get_avg_temp(&cfg_temp, DMA_TEMP_CHANNEL), get_my_ip());
+
+        // Envia os dados via POST
+        send_data_to_access_point(get_avg_temp(&cfg_temp, DMA_TEMP_CHANNEL));
     }
 }
