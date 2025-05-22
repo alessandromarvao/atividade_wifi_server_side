@@ -15,8 +15,6 @@
 volatile bool is_connected = false;
 static bool busy = false;
 
-char *my_ip;
-
 char json_data[JSON_BUF_SIZE];
 
 // Função para inicializar o Wi-Fi e conectar-se à rede
@@ -47,22 +45,20 @@ bool wifi_connect()
         printf("Connected to Wi-Fi\n");
         is_connected = true;
         sleep_ms(1500);
-
-        // Obtém o IP atribuído
-        uint8_t *ip_address = (uint8_t *)&(cyw43_state.netif[0].ip_addr.addr);
-
-        // Armazena o IP em uma string
-        snprintf(my_ip, 16, "%d.%d.%d.%d", ip_address[0], ip_address[1], ip_address[2], ip_address[3]);
-
-        // Exibe o IP no console (para debug)
-        printf("%s\n", my_ip);
     }
     return true;
 }
 
 // Função para obter o IP atribuído
-char* get_my_ip() {
-    return my_ip;
+uint8_t *get_my_ip()
+{
+    // Obtém o IP atribuído
+    uint8_t *ip_address = (uint8_t *)&(cyw43_state.netif[0].ip_addr.addr);
+
+    // Exibe o IP no console (para debug)
+    printf("IP obtido: %d.%d.%d.%d\n", ip_address[0], ip_address[1], ip_address[2], ip_address[3]);
+
+    return ip_address;
 }
 
 // Função chamada quando a conexão TCP com o servidor é estabelecida
@@ -106,6 +102,7 @@ bool send_data_to_access_point(char *temperature)
         return true;
 
     busy = true;
+    char *my_ip = get_my_ip();
 
     snprintf(json_data, JSON_BUF_SIZE,
              "{\n  \"IP\": \"%s\",\n  \"Temp\": %.2f\n}",

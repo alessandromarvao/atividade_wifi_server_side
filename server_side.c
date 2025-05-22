@@ -10,7 +10,7 @@
 
 int main()
 {
-    char *ip = NULL;
+    char ip[16];
 
     stdio_init_all();
 
@@ -21,13 +21,13 @@ int main()
     dma_init();
 
     if (wifi_connect()) {
-        printf("Conectado ao Wi-Fi\n");
-        ip = get_my_ip();
-    } else {
-        printf("Falha na conexão Wi-Fi\n");
+        uint8_t *ip_address = get_my_ip();
+        
+        snprintf(ip, 16, "%d.%d.%d.%d", ip_address[0], ip_address[1], ip_address[2], ip_address[3]);
+        printf("IP: %s\n", ip);
     }
 
     while (true) {
-        display_temperature(get_avg_temp(&cfg_temp, DMA_TEMP_CHANNEL), ip);
+        display_temperature(get_avg_temp(&cfg_temp, DMA_TEMP_CHANNEL), get_my_ip());
     }
 }
